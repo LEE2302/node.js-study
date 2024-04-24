@@ -61,6 +61,8 @@ var app = http.createServer(function (request, response) {
 </html>
   `;
 
+  //   응답 코드 => 로컬호스트 포트3000을 열면 해당 코드가 나온다.
   response.end(template);
 });
+// port3000으로 설정
 app.listen(3000);
