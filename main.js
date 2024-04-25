@@ -12,43 +12,46 @@ var app = http.createServer(function (request, response) {
   var queryData = url.parse(_url, true).query;
   //   queryData값에서 쿼리스트링 키로 값을 가져옴 => 아래와 같은 경우는 ?id=HTML 이라고 했을때 HTML값을 가져옴
   var title = queryData.id;
+  //   require하여 가져온 url.parse(_url, true).query; 통하여 요청된 url에서 pathname을 가져옴.
+  var pathName = url.parse(_url, true).pathname;
 
-  if (_url == "/") {
-    title = "Welcome";
-  }
-  if (_url == "/favicon.ico") {
-    return response.writeHead(404);
-  }
-  response.writeHead(200);
-
-  //   fs모듈에서 파일 읽어오는 readFile 불러와서 파일 경로 설정, 유니코드 설정, 콜백함수에서 가져온 데이터 사용
-  fs.readFile(`data/${title}`, "utf-8", function (err, data) {
-    // 마지막 응답을 보내주는 변수
-    var template = `
-    <!DOCTYPE html>
-  <html>
-    <head>
-      <title>WEB1 - ${title}</title>
-      <meta charset="utf-8" />
-    </head>
-    <body>
-      <h1><a href="/">WEB</a></h1>
-      <ol>
-        <li><a href="/?id=HTML">HTML</a></li>
-        <li><a href="/?id=CSS">CSS</a></li>
-        <li><a href="/?id=JavaScript">JavaScript</a></li>
-      </ol>
-      <h2>${title}</h2>
-      <p>
-        ${data}
-      </p>
-    </body>
-  </html>
-    `;
-
+  //   조건문 pathName이 아무것도 없다면.
+  if (pathName === "/") {
+    //   fs모듈에서 파일 읽어오는 readFile 불러와서 파일 경로 설정, 유니코드 설정, 콜백함수에서 가져온 데이터 사용
+    fs.readFile(`data/${title}`, "utf-8", function (err, data) {
+      // 마지막 응답을 보내주는 변수
+      var template = `
+  <!DOCTYPE html>
+<html>
+  <head>
+    <title>WEB1 - ${title}</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <h1><a href="/">WEB</a></h1>
+    <ol>
+      <li><a href="/?id=HTML">HTML</a></li>
+      <li><a href="/?id=CSS">CSS</a></li>
+      <li><a href="/?id=JavaScript">JavaScript</a></li>
+    </ol>
+    <h2>${title}</h2>
+    <p>
+      ${data}
+    </p>
+  </body>
+</html>
+  `;
+      // 응답 헤더로 보내는 응답 코드
+      response.writeHead(200);
+      //   응답 코드 => 로컬호스트 포트3000을 열면 해당 코드가 나온다.
+      response.end(template);
+    });
+  } else {
+    // 응답 헤더로 보내는 응답 코드
+    response.writeHead(404);
     //   응답 코드 => 로컬호스트 포트3000을 열면 해당 코드가 나온다.
-    response.end(template);
-  });
+    response.end("Not Found");
+  }
 });
 // port3000으로 설정
 app.listen(3000);
